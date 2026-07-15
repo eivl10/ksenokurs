@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ксенокурс по ритму — Космоскай</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Unbounded:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-light: #FFFFFF;
+            --surface-light: #F8FBFC;
+            
+            --kosmosky-mid: #359FB5;
+            --kosmosky-dark: #075666;
+            --kosmosky-light: #ADF1FF;
+            
+            --text-main: #2A3135;
+            --text-muted: #6A757B;
+            
+            --gradient-accent: linear-gradient(135deg, #3D8A9A 0%, #6DC6D8 100%);
+            
+            --font-heading: 'Unbounded', sans-serif;
+            --font-text: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            font-family: var(--font-text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* === НАВИГАЦИЯ === */
+        header {
+            padding: 30px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-img {
+            max-height: 40px;
+            opacity: 0.9;
+        }
+
+        .dev-nav {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .dev-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .dev-nav a:hover {
+            color: var(--kosmosky-mid);
+        }
+
+        /* === HERO СЕКЦИЯ === */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            position: relative;
+            border-radius: 40px;
+            overflow: hidden;
+            background: var(--surface-light);
+            margin-top: 20px;
+        }
+
+        /* Фоновая картинка с полупрозрачностью */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('штуки для дизайна/4.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.1; /* Сильная прозрачность, чтобы не мешать тексту */
+            z-index: 0;
+            mix-blend-mode: multiply;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            padding: 40px 20px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-heading);
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--kosmosky-dark);
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-main);
+            max-width: 650px;
+            margin: 0 auto 40px;
+            font-weight: 400;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--gradient-accent);
+            color: #FFFFFF;
+            text-decoration: none;
+            padding: 18px 45px;
+            border-radius: 50px;
+            font-family: var(--font-text);
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(53, 159, 181, 0.4);
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            color: var(--kosmosky-dark);
+            margin-bottom: 50px;
+            font-weight: 700;
+        }
+
+        /* === ПРЕИМУЩЕСТВА === */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            padding: 80px 0;
+        }
+
+        .feature-card {
+            padding: 40px 30px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid rgba(53, 159, 181, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #FFFFFF;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 20px;
+            color: var(--kosmosky-mid);
+        }
+
+        .feature-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+        }
+
+        .feature-card h3 {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            color: var(--kosmosky-dark);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* === АВТОР КУРСА === */
+        .author-section {
+            padding: 80px 0;
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            background: var(--surface-light);
+            border-radius: 40px;
+            margin-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .author-section::after {
+            content: '';
+            position: absolute;
+            right: -100px;
+            bottom: -100px;
+            width: 400px;
+            height: 400px;
+            background-image: url('штуки для дизайна/8.jpg');
+            background-size: cover;
+            opacity: 0.05;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .author-img {
+            flex: 0 0 45%;
+            height: 500px;
+            border-radius: 0 40px 40px 0;
+            overflow: hidden;
+        }
+
+        .author-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .author-text {
+            flex: 1;
+            padding-right: 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .author-text h2 {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            color: var(--kosmosky-dark);
+            margin-bottom: 10px;
+        }
+
+        .author-subtitle {
+            color: var(--kosmosky-mid);
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .author-text p {
+            color: var(--text-main);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        /* === ПРОГРАММА (АККОРДЕОНЫ) === */
+        .program {
+            padding: 40px 0 80px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .accordion-item {
+            background: #FFFFFF;
+            border: 1px solid rgba(53, 159, 181, 0.2);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.04);
+        }
+
+        .accordion-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 24px 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .lesson-number {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--kosmosky-light);
+            margin-right: 30px;
+            min-width: 50px;
+        }
+
+        .lesson-title {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            color: var(--kosmosky-dark);
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .accordion-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--kosmosky-mid);
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+            background: var(--surface-light);
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+            transition: max-height 0.6s ease-in-out;
+        }
+
+        .accordion-inner {
+            padding: 0 30px 30px 110px;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        /* === ТАРИФЫ (ЦЕНЫ) === */
+        .pricing {
+            padding: 60px 0 100px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .price-card {
+            background: #FFFFFF;
+            border: 2px solid rgba(53, 159, 181, 0.1);
+            border-radius: 30px;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .price-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .price-card.featured {
+            border: 2px solid var(--kosmosky-mid);
+            box-shadow: 0 20px 40px rgba(53, 159, 181, 0.1);
+        }
+
+        .price-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gradient-accent);
+            color: #FFF;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .price-card h3 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--kosmosky-dark);
+            margin-bottom: 15px;
+        }
+
+        .price-card .price {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--kosmosky-mid);
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .price-features {
+            text-align: left;
+            margin-bottom: 40px;
+        }
+
+        .price-features li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .price-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--kosmosky-mid);
+            font-weight: bold;
+        }
+
+        .price-features li.disabled {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        .price-features li.disabled::before {
+            content: '—';
+            color: var(--text-muted);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--kosmosky-mid);
+            color: var(--kosmosky-mid);
+        }
+
+        .btn-outline:hover {
+            background: rgba(53, 159, 181, 0.05);
+            box-shadow: none;
+        }
+
+        /* === ПОДВАЛ === */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .features { grid-template-columns: 1fr; }
+            .author-section { flex-direction: column; padding: 0 0 40px; text-align: center; }
+            .author-img { height: 350px; border-radius: 40px 40px 0 0; width: 100%; }
+            .author-text { padding: 30px; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .accordion-inner { padding: 0 20px 20px 20px; }
+            .lesson-number { margin-right: 15px; }
+        }
+    </style>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+<div class="container">
+    
+    <header>
+        <img src="штуки для дизайна/строчка черн 1000.png" alt="Космоскай" class="logo-img" onerror="this.style.display='none'">
+        <nav class="dev-nav">
+            <a href="starter_pack.html">📦 Стартовый пакет</a>
+            <a href="course_materials.html">📝 Тексты и настройки</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Почувствуй ритм.<br>Сыграй свою музыку.</h1>
+            <p>Закрытый курс по ритму для владельцев глюкофонов и хэндпанов. За 3,5 недели ты пройдёшь путь от интуитивных ударов до осознанных ритмических рисунков.</p>
+            <a href="#tariffs" class="btn">Выбрать тариф</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+            </div>
+            <h3>Удобный формат</h3>
+            <p>Закрытый Telegram-канал. 2 урока в неделю. Смотри видео и занимайся, когда тебе удобно.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+            </div>
+            <h3>Много практики</h3>
+            <p>Минимум сухой теории. Сразу переносим упражнения на лепестки и слушаем результат.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            </div>
+            <h3>Обратная связь</h3>
+            <p>Сдавай видео в чат и получай подробный разбор. Закрытое сообщество единомышленников.</p>
+        </div>
+    </section>
+
+    <section class="author-section">
+        <div class="author-img">
+            <img src="штуки для дизайна/Ксено.jpg" alt="Алекс Ксено">
+        </div>
+        <div class="author-text">
+            <h2>Алекс Ксено</h2>
+            <div class="author-subtitle">Автор и преподаватель курса</div>
+            <p>Один из первопроходцев и главных популяризаторов глюкофонов и хэндпанов.</p>
+            <p>Музыкант, эксперт и автор десятков обучающих программ. Алекс глубоко понимает не только техническую сторону игры, но и медитативный, раскрывающий потенциал этнических инструментов.</p>
+            <p>На курсе он станет твоим личным проводником в мир структурированного ритма, сохраняя при этом свободу и лёгкость интуитивной игры.</p>
+        </div>
+    </section>
+
+    <section class="program">
+        <h2 class="section-title">Что внутри курса</h2>
+        
+        <div class="accordion">
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="lesson-number">01</span>
+                    <span class="lesson-title">Ритмическая сетка</span>
+                    <svg class="accordion-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        Базовый инструмент для визуализации любого ритма. Ты научишься не просто слышать музыку, но и видеть её структуру. Мы научимся ровно считать и правильно топать, чтобы синхронизировать тело с метрономом.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="lesson-number">02</span>
+                    <span class="lesson-title">Сильная и слабая доли</span>
+                    <svg class="accordion-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        Переносим ритм на глюкофон. Ты узнаешь, как опорная точка (счёт «РАЗ») меняет весь характер мелодии, и почему одинаково сыгранные ноты звучат механично.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="lesson-number">03</span>
+                    <span class="lesson-title">Музыкальный размер</span>
+                    <svg class="accordion-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        Разбираем самый популярный размер 4/4. Учимся строить классический музыкальный «квадрат». В качестве бонуса затронем нечетный размер 5/4, чтобы расширить восприятие.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="lesson-number">04</span>
+                    <span class="lesson-title">Темп и метроном</span>
+                    <svg class="accordion-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        Метроном — не враг, а твой лучший партнёр. Учимся не бежать вперёд и не отставать. Практикуем игру в трёх базовых темпах: 60, 70 и 80 BPM, чувствуя разницу в энергии.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="lesson-number">05</span>
+                    <span class="lesson-title">Акценты и паузы</span>
+                    <svg class="accordion-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        Оживляем ритмический рисунок. Ты узнаешь, как вовремя сделанная пауза заставляет слушателя затаить дыхание, а правильный акцент дарит мелодии грув.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="lesson-number">06</span>
+                    <span class="lesson-title">Рудименты</span>
+                    <svg class="accordion-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        Секретные приёмы перкуссионистов: чередования рук и парадиддлы. Эти техники позволят тебе играть быстрее, чище и интереснее на любых лепестках.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="tariffs">
+        <h2 class="section-title">Тарифы</h2>
+        <div class="pricing-grid">
+            
+            <div class="price-card">
+                <h3>Самостоятельный</h3>
+                <span class="price">4 900 ₽</span>
+                <ul class="price-features">
+                    <li>Доступ ко всем 6 видеоурокам</li>
+                    <li>Доступ к закрытому каналу</li>
+                    <li>Стартовый пакет (таблицы, словари)</li>
+                    <li class="disabled">Общий чат учеников</li>
+                    <li class="disabled">Проверка домашних заданий</li>
+                    <li class="disabled">Обратная связь от преподавателя</li>
+                </ul>
+                <a href="#" class="btn btn-outline" style="width:100%; display:block;">Выбрать</a>
+            </div>
+
+            <div class="price-card featured">
+                <div class="price-badge">Рекомендуем</div>
+                <h3>С наставником</h3>
+                <span class="price">7 900 ₽</span>
+                <ul class="price-features">
+                    <li>Доступ ко всем 6 видеоурокам</li>
+                    <li>Доступ к закрытому каналу</li>
+                    <li>Стартовый пакет (таблицы, словари)</li>
+                    <li>Общий закрытый чат учеников</li>
+                    <li>Личная проверка всех домашних заданий</li>
+                    <li>Развёрнутая обратная связь от Алекса Ксено</li>
+                </ul>
+                <a href="#" class="btn" style="width:100%; display:block;">Выбрать</a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Космоскай. Музыка, которая всегда с тобой.</p>
+    </footer>
+
+</div>
+
+<script>
+    // Скрипт для аккордеона
+    document.querySelectorAll('.accordion-header').forEach(button => {
+        button.addEventListener('click', () => {
+            const item = button.parentElement;
+            const isActive = item.classList.contains('active');
+            
+            // Закрываем все
+            document.querySelectorAll('.accordion-item').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Открываем кликнутый, если он не был открыт
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
