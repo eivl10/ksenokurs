@@ -3,70 +3,84 @@
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #ff4757;
+    background-color: #0f9d58;
     color: white;
     border: none;
-    border-radius: 50px;
+    border-radius: 24px;
     padding: 12px 24px;
-    font-size: 16px;
-    font-family: inherit;
-    font-weight: bold;
+    font-size: 14px;
+    font-family: "Google Sans", Roboto, sans-serif;
+    font-weight: 500;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
     z-index: 9999;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 #feedback-toggle-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.6);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 #feedback-toggle-btn.active {
-    background-color: #2ed573;
-    box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
+    background-color: #d93025; /* Red to cancel */
 }
 
 /* Feedback Pins */
 .feedback-pin {
     position: absolute;
-    width: 24px;
-    height: 24px;
-    background-color: #ff4757;
+    width: 28px;
+    height: 28px;
+    background-color: #0f9d58;
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-    font-family: sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: Roboto, sans-serif;
     cursor: pointer;
     transform: translate(-50%, -50%);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     z-index: 9998;
     border: 2px solid white;
+    transition: transform 0.2s;
 }
 
 .feedback-pin:hover {
-    transform: translate(-50%, -50%) scale(1.2);
+    transform: translate(-50%, -50%) scale(1.15);
 }
 
-/* Feedback Popup */
+/* Feedback Popup - Google Docs Style */
 #feedback-popup {
     position: absolute;
-    background: white;
+    background: #fff;
     border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    width: 280px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    width: 300px;
     z-index: 10000;
     display: none;
-    font-family: sans-serif;
-    transform: translate(-50%, 15px);
+    font-family: Roboto, Arial, sans-serif;
+    transform: translate(-50%, 20px);
+    border: 1px solid #e0e0e0;
 }
 
+/* Little triangle pointing up */
 #feedback-popup::before {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 9px 9px 9px;
+    border-style: solid;
+    border-color: transparent transparent #e0e0e0 transparent;
+}
+#feedback-popup::after {
     content: '';
     position: absolute;
     top: -8px;
@@ -74,107 +88,163 @@
     transform: translateX(-50%);
     border-width: 0 8px 8px 8px;
     border-style: solid;
-    border-color: transparent transparent white transparent;
+    border-color: transparent transparent #fff transparent;
 }
 
 #feedback-popup h4 {
-    margin: 0 0 10px 0;
+    margin: 0 0 12px 0;
     font-size: 14px;
-    color: #333;
+    color: #202124;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-weight: 500;
+}
+
+.feedback-header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Resolve Button */
+.feedback-resolve-btn {
+    background: none;
+    border: none;
+    color: #0f9d58;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.feedback-resolve-btn:hover {
+    background-color: #f1f8f4;
 }
 
 .feedback-close-icon {
     cursor: pointer;
-    color: #999;
+    color: #5f6368;
     font-size: 18px;
     line-height: 1;
 }
-
 .feedback-close-icon:hover {
-    color: #333;
+    color: #202124;
 }
 
-#feedback-name-input, #feedback-textarea, #feedback-reply-textarea {
+#feedback-name-input, #feedback-reply-name-input {
     width: 100%;
     box-sizing: border-box;
     font-family: inherit;
     font-size: 13px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 8px;
-}
-
-#feedback-name-input {
     margin-bottom: 8px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    padding: 8px 12px;
+    color: #202124;
 }
 
 #feedback-textarea, #feedback-reply-textarea {
-    min-height: 60px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 13px;
+    margin-bottom: 12px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    padding: 8px 12px;
+    min-height: 70px;
     resize: vertical;
+    color: #202124;
+}
+
+#feedback-name-input:focus, #feedback-textarea:focus, 
+#feedback-reply-name-input:focus, #feedback-reply-textarea:focus {
+    outline: none;
+    border-color: #1a73e8;
 }
 
 /* Threads */
 #feedback-thread-list {
     max-height: 250px;
     overflow-y: auto;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #ebebeb;
+    padding-bottom: 8px;
 }
 
 .feedback-message {
-    background: #f8f9fa;
-    border-radius: 6px;
-    padding: 8px 10px;
-    margin-bottom: 8px;
+    padding: 8px 0;
+    margin-bottom: 4px;
 }
 
 .feedback-message-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 4px;
+    align-items: baseline;
 }
 
 .feedback-author {
-    font-weight: bold;
-    font-size: 12px;
-    color: #2c3e50;
+    font-weight: 500;
+    font-size: 13px;
+    color: #202124;
 }
 
 .feedback-date {
-    font-size: 10px;
-    color: #999;
+    font-size: 11px;
+    color: #5f6368;
 }
 
 .feedback-text {
     font-size: 13px;
-    color: #444;
+    color: #3c4043;
     white-space: pre-wrap;
     margin: 0;
+    line-height: 1.4;
+}
+
+.feedback-actions-row {
+    display: flex;
+    gap: 8px;
 }
 
 .feedback-btn-primary {
-    background-color: #1e90ff;
+    background-color: #1a73e8;
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 6px 12px;
+    padding: 8px 16px;
     font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.feedback-btn-primary:hover {
+    background-color: #1557b0;
+}
+.feedback-btn-primary:disabled {
+    background-color: #8ab4f8;
+    cursor: not-allowed;
 }
 
 .feedback-btn-secondary {
     background: none;
-    border: none;
-    color: #999;
-    cursor: pointer;
+    border: 1px solid #dadce0;
+    color: #1a73e8;
+    border-radius: 4px;
+    padding: 7px 15px;
     font-size: 13px;
-    margin-left: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.feedback-btn-secondary:hover {
+    background-color: #f8f9fa;
 }
 
 /* Document state */
