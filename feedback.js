@@ -73,7 +73,7 @@ function initFeedbackUI() {
     `;
     document.body.appendChild(popup);
 
-    // Close buttons (using the (x) icon)
+    // Close buttons
     document.querySelectorAll('.feedback-close-icon').forEach(icon => {
         icon.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -92,16 +92,21 @@ function initFeedbackUI() {
         try {
             await sendToGoogle({ action: 'resolve', id: threadId });
             
-            // Mark as resolved locally
             allPins.forEach(p => {
                 if (p.id === threadId || p.parentId === threadId) {
                     p.status = 'Resolved';
                 }
             });
             
-            // Remove the pin element
             const pinEl = document.querySelector(`.feedback-pin[data-id="${threadId}"]`);
             if (pinEl) pinEl.remove();
+            
+            document.querySelectorAll(`.feedback-text-highlight[data-thread-id="${threadId}"]`).forEach(el => {
+                // Remove highlight by replacing span with its text
+                const parent = el.parentNode;
+                while (el.firstChild) parent.insertBefore(el.firstChild, el);
+                parent.removeChild(el);
+            });
             
             closePopup();
         } catch (err) {
@@ -128,16 +133,32 @@ function initFeedbackUI() {
         btnSave.textContent = 'Отправка...';
         btnSave.disabled = true;
 
-        const x = parseFloat(popup.dataset.x);
-        const y = parseFloat(popup.dataset.y);
+        const isHighlight = popup.dataset.isHighlight === 'true';
+        let x = popup.dataset.x;
+        let y = popup.dataset.y;
+        
+        if (isHighlight) {
+            x = 'text';
+            y = popup.dataset.selectedText;
+        }
+
         const page = window.location.pathname;
         const newId = generateId();
 
         try {
             await sendToGoogle({ page, x, y, text, id: newId, parentId: '', name });
-            const newPin = { x, y, text, date: new Date().toLocaleString(), page, id: newId, parentId: '', name, status: 'Open' };
+            const newPin = { x, y, text, date: new Date().toISOString(), page, id: newId, parentId: '', name, status: 'Open' };
             allPins.push(newPin);
-            renderPin(newPin);
+            
+            // Mark as read immediately
+            markAsRead(newId);
+            
+            if (isHighlight) {
+                highlightTextNodes(y, newId);
+            } else {
+                renderPin(newPin);
+            }
+            
             closePopup();
         } catch (err) {
             alert('Ошибка при отправке: ' + err);
@@ -166,13 +187,15 @@ function initFeedbackUI() {
         const parentId = popup.dataset.threadId;
         const page = window.location.pathname;
         const newId = generateId();
+        const dateIso = new Date().toISOString();
 
         try {
             await sendToGoogle({ page, x: '', y: '', text, id: newId, parentId: parentId, name });
-            const newReply = { x: '', y: '', text, date: new Date().toLocaleString(), page, id: newId, parentId, name, status: 'Open' };
+            const newReply = { x: '', y: '', text, date: dateIso, page, id: newId, parentId, name, status: 'Open' };
             allPins.push(newReply);
             
-            // Re-render thread list
+            markAsRead(parentId);
+            
             renderThread(parentId);
             updatePinCount(parentId);
             
@@ -185,17 +208,104 @@ function initFeedbackUI() {
         }
     });
 
-    // Document Click Handler
+    // Handle Text Selection
+    document.addEventListener('mouseup', (e) => {
+        if (!isFeedbackMode) return;
+        if (e.target.closest('#feedback-popup') || e.target.closest('#feedback-toggle-btn')) return;
+        
+        const selection = window.getSelection();
+        const selectedText = selection.toString().trim();
+        
+        if (selectedText.length > 0) {
+            e.preventDefault();
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            
+            openWritePopup(rect.left + window.scrollX + (rect.width/2), rect.bottom + window.scrollY, true, selectedText);
+            selection.removeAllRanges();
+        }
+    });
+
+    // Document Click Handler (for standard pins)
     document.addEventListener('click', (e) => {
         if (!isFeedbackMode) return;
-        if (e.target.closest('#feedback-popup') || e.target.closest('#feedback-toggle-btn') || e.target.closest('.feedback-pin')) {
+        if (e.target.closest('#feedback-popup') || e.target.closest('#feedback-toggle-btn') || e.target.closest('.feedback-pin') || e.target.closest('.feedback-text-highlight')) {
             return;
         }
+        
+        // If selection exists, let mouseup handle it
+        if (window.getSelection().toString().trim() !== '') return;
+        
         e.preventDefault();
-        openWritePopup(e.pageX, e.pageY);
+        openWritePopup(e.pageX, e.pageY, false);
     });
 
     loadPins();
+}
+
+// Unread Logic
+function getThreadLastDate(threadId) {
+    const threadPins = getThreadPins(threadId);
+    if (threadPins.length === 0) return 0;
+    return Math.max(...threadPins.map(p => {
+        const d = new Date(p.date);
+        return isNaN(d.getTime()) ? 0 : d.getTime();
+    }));
+}
+
+function checkUnread(threadId, element) {
+    const lastDate = getThreadLastDate(threadId);
+    const readDate = parseInt(localStorage.getItem('feedback_read_' + threadId) || '0');
+    if (lastDate > readDate) {
+        element.classList.add('has-unread');
+    } else {
+        element.classList.remove('has-unread');
+    }
+}
+
+function markAsRead(threadId) {
+    localStorage.setItem('feedback_read_' + threadId, Date.now());
+    const pinEl = document.querySelector(`.feedback-pin[data-id="${threadId}"]`);
+    if (pinEl) pinEl.classList.remove('has-unread');
+    
+    document.querySelectorAll(`.feedback-text-highlight[data-thread-id="${threadId}"]`).forEach(el => {
+        el.classList.remove('has-unread');
+    });
+}
+
+function highlightTextNodes(searchText, threadId) {
+    if (!searchText) return;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while (node = walker.nextNode()) {
+        if (node.parentElement && node.parentElement.closest('#feedback-popup, #feedback-toggle-btn')) continue;
+        if (node.parentElement && node.parentElement.classList.contains('feedback-text-highlight')) continue;
+        
+        const index = node.nodeValue.indexOf(searchText);
+        if (index >= 0) {
+            const span = document.createElement('span');
+            span.className = 'feedback-text-highlight';
+            span.dataset.threadId = threadId;
+            span.textContent = searchText;
+            
+            const afterText = node.nodeValue.substring(index + searchText.length);
+            node.nodeValue = node.nodeValue.substring(0, index);
+            
+            node.parentNode.insertBefore(span, node.nextSibling);
+            if (afterText) {
+                node.parentNode.insertBefore(document.createTextNode(afterText), span.nextSibling);
+            }
+            
+            checkUnread(threadId, span);
+            
+            span.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const rect = span.getBoundingClientRect();
+                openReadPopup(threadId, rect.left + window.scrollX + (rect.width/2), rect.bottom + window.scrollY);
+            });
+            break; // Highlight first match
+        }
+    }
 }
 
 async function sendToGoogle(payload) {
@@ -208,15 +318,17 @@ async function sendToGoogle(payload) {
     });
 }
 
-function openWritePopup(x, y) {
+function openWritePopup(x, y, isHighlight = false, selectedText = '') {
     if (currentTempPin) currentTempPin.remove();
 
-    currentTempPin = document.createElement('div');
-    currentTempPin.className = 'feedback-pin';
-    currentTempPin.style.left = x + 'px';
-    currentTempPin.style.top = y + 'px';
-    currentTempPin.textContent = '+';
-    document.body.appendChild(currentTempPin);
+    if (!isHighlight) {
+        currentTempPin = document.createElement('div');
+        currentTempPin.className = 'feedback-pin';
+        currentTempPin.style.left = x + 'px';
+        currentTempPin.style.top = y + 'px';
+        currentTempPin.textContent = '+';
+        document.body.appendChild(currentTempPin);
+    }
 
     const popup = document.getElementById('feedback-popup');
     popup.style.display = 'block';
@@ -225,6 +337,8 @@ function openWritePopup(x, y) {
     
     popup.dataset.x = x;
     popup.dataset.y = y;
+    popup.dataset.isHighlight = isHighlight;
+    popup.dataset.selectedText = selectedText;
 
     document.getElementById('feedback-write-mode').style.display = 'block';
     document.getElementById('feedback-read-mode').style.display = 'none';
@@ -241,6 +355,9 @@ function getThreadPins(threadId) {
 
 function renderThread(threadId) {
     const threadPins = getThreadPins(threadId);
+    
+    // Sort by date correctly
+    threadPins.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     
     const list = document.getElementById('feedback-thread-list');
     list.innerHTML = '';
@@ -262,6 +379,8 @@ function renderThread(threadId) {
 }
 
 function openReadPopup(threadId, x, y) {
+    markAsRead(threadId);
+    
     const popup = document.getElementById('feedback-popup');
     popup.style.display = 'block';
     popup.style.left = x + 'px';
@@ -294,11 +413,20 @@ function updatePinCount(threadId) {
     if (pinEl) {
         const threadPins = getThreadPins(threadId);
         pinEl.textContent = threadPins.length;
+        checkUnread(threadId, pinEl);
     }
+    document.querySelectorAll(`.feedback-text-highlight[data-thread-id="${threadId}"]`).forEach(el => {
+        checkUnread(threadId, el);
+    });
 }
 
 function renderPin(pinData) {
     if (pinData.parentId || pinData.status === 'Resolved') return;
+    
+    if (pinData.x === 'text') {
+        highlightTextNodes(pinData.y, pinData.id);
+        return;
+    }
     
     const pin = document.createElement('div');
     pin.className = 'feedback-pin';
@@ -312,7 +440,7 @@ function renderPin(pinData) {
     });
 
     document.body.appendChild(pin);
-    updatePinCount(pinData.id); // Set initial count
+    updatePinCount(pinData.id);
 }
 
 function formatDate(dateStr) {
@@ -321,7 +449,6 @@ function formatDate(dateStr) {
         const d = new Date(dateStr);
         if (isNaN(d.getTime())) return dateStr;
         
-        // Return time if today, else date
         const today = new Date();
         if (d.toDateString() === today.toDateString()) {
             return d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
