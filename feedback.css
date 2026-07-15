@@ -54,6 +54,51 @@
     transform: translate(-50%, -50%) scale(1.15);
 }
 
+/* Unread Indicator on Pin */
+.feedback-pin.has-unread::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    background-color: #ea4335; /* Google Red */
+    border: 2px solid white;
+    border-radius: 50%;
+    animation: feedbackPulse 2s infinite;
+}
+
+@keyframes feedbackPulse {
+    0% { box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.7); }
+    70% { box-shadow: 0 0 0 6px rgba(234, 67, 53, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(234, 67, 53, 0); }
+}
+
+/* Text Highlight */
+.feedback-text-highlight {
+    background-color: rgba(251, 188, 4, 0.4); /* Google Yellow transparent */
+    border-bottom: 2px solid #fbbc04;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.feedback-text-highlight:hover {
+    background-color: rgba(251, 188, 4, 0.7);
+}
+
+.feedback-text-highlight.has-unread::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    width: 8px;
+    height: 8px;
+    background-color: #ea4335;
+    border-radius: 50%;
+    animation: feedbackPulse 2s infinite;
+}
+
 /* Feedback Popup - Google Docs Style */
 #feedback-popup {
     position: absolute;
