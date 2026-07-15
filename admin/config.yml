@@ -13,6 +13,37 @@ collections:
     delete: false
     create: false
     files:
+      - name: "index_page"
+        label: "Главная страница (Лендинг)"
+        file: "index_content.md"
+        fields:
+          - { label: "Заголовок", name: "hero_title", widget: "string" }
+          - { label: "Подзаголовок", name: "hero_text", widget: "text" }
+          - { label: "Преимущество 1: Заголовок", name: "feature1_title", widget: "string" }
+          - { label: "Преимущество 1: Текст", name: "feature1_text", widget: "text" }
+          - { label: "Преимущество 2: Заголовок", name: "feature2_title", widget: "string" }
+          - { label: "Преимущество 2: Текст", name: "feature2_text", widget: "text" }
+          - { label: "Преимущество 3: Заголовок", name: "feature3_title", widget: "string" }
+          - { label: "Преимущество 3: Текст", name: "feature3_text", widget: "text" }
+          - { label: "Имя автора", name: "author_name", widget: "string" }
+          - { label: "Должность автора", name: "author_subtitle", widget: "string" }
+          - { label: "О авторе (текст)", name: "body", widget: "markdown" }
+          - { label: "Урок 1: Заголовок", name: "lesson1_title", widget: "string" }
+          - { label: "Урок 1: Текст", name: "lesson1_text", widget: "text" }
+          - { label: "Урок 2: Заголовок", name: "lesson2_title", widget: "string" }
+          - { label: "Урок 2: Текст", name: "lesson2_text", widget: "text" }
+          - { label: "Урок 3: Заголовок", name: "lesson3_title", widget: "string" }
+          - { label: "Урок 3: Текст", name: "lesson3_text", widget: "text" }
+          - { label: "Урок 4: Заголовок", name: "lesson4_title", widget: "string" }
+          - { label: "Урок 4: Текст", name: "lesson4_text", widget: "text" }
+          - { label: "Урок 5: Заголовок", name: "lesson5_title", widget: "string" }
+          - { label: "Урок 5: Текст", name: "lesson5_text", widget: "text" }
+          - { label: "Урок 6: Заголовок", name: "lesson6_title", widget: "string" }
+          - { label: "Урок 6: Текст", name: "lesson6_text", widget: "text" }
+          - { label: "Тариф 1: Название", name: "price1_name", widget: "string" }
+          - { label: "Тариф 1: Цена", name: "price1_amount", widget: "string" }
+          - { label: "Тариф 2: Название", name: "price2_name", widget: "string" }
+          - { label: "Тариф 2: Цена", name: "price2_amount", widget: "string" }
       - name: "starter_pack"
         label: "Стартовый пакет (Для учеников)"
         file: "course_content.md"
