@@ -50,7 +50,28 @@ def main():
     with open('course_materials.html', 'w', encoding='utf-8') as f:
         f.write(cm_out)
 
-    print("Successfully built starter_pack.html and course_materials.html in UTF-8!")
+    # 3. Update index.html
+    index_md_content = read_file('index_content.md')
+    index_html_body = md.convert(index_md_content)
+    index_tpl = read_file('index_template.html')
+    
+    if hasattr(md, 'Meta') and md.Meta:
+        for key, value_list in md.Meta.items():
+            value = " ".join(value_list)
+            # Remove enclosing quotes if any from frontmatter values
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1]
+            if value.startswith("'") and value.endswith("'"):
+                value = value[1:-1]
+            index_tpl = index_tpl.replace('{{' + key + '}}', value)
+            
+    index_tpl = index_tpl.replace('<!-- AUTHOR_TEXT -->', index_html_body)
+    index_out = fix_charset(index_tpl)
+    
+    with open('index.html', 'w', encoding='utf-8') as f:
+        f.write(index_out)
+
+    print("Successfully built index.html, starter_pack.html and course_materials.html in UTF-8!")
 
 if __name__ == '__main__':
     main()
