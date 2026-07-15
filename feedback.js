@@ -55,7 +55,10 @@ function initFeedbackUI() {
             
             <input type="text" id="feedback-reply-name-input" placeholder="Твое имя">
             <textarea id="feedback-reply-textarea" placeholder="Ответить..."></textarea>
-            <button id="feedback-reply-btn" class="feedback-btn-primary">Ответить</button>
+            <div>
+                <button id="feedback-reply-btn" class="feedback-btn-primary">Ответить</button>
+                <button id="feedback-close-btn" class="feedback-btn-secondary">Закрыть окно</button>
+            </div>
         </div>
     `;
     document.body.appendChild(popup);
@@ -67,6 +70,15 @@ function initFeedbackUI() {
             closePopup();
         });
     });
+    
+    // Bottom close button
+    const closeBtn = document.getElementById('feedback-close-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closePopup();
+        });
+    }
     
     // Save new pin
     document.getElementById('feedback-save-btn').addEventListener('click', async (e) => {
