@@ -42,22 +42,32 @@ function initFeedbackUI() {
     popup.id = 'feedback-popup';
     popup.innerHTML = `
         <div id="feedback-write-mode">
-            <h4>Новый комментарий <span class="feedback-close-icon">&times;</span></h4>
+            <h4>
+                <span>Новый комментарий</span>
+                <span class="feedback-close-icon" title="Закрыть">&times;</span>
+            </h4>
             <input type="text" id="feedback-name-input" placeholder="Твое имя (сохранится)">
-            <textarea id="feedback-textarea" placeholder="Напиши свои правки сюда..."></textarea>
-            <div>
+            <textarea id="feedback-textarea" placeholder="Напиши комментарий..."></textarea>
+            <div class="feedback-actions-row">
                 <button id="feedback-save-btn" class="feedback-btn-primary">Отправить</button>
             </div>
         </div>
         <div id="feedback-read-mode" style="display: none;">
-            <h4>Ветка комментариев <span class="feedback-close-icon">&times;</span></h4>
+            <h4>
+                <span>Обсуждение</span>
+                <div class="feedback-header-actions">
+                    <button id="feedback-resolve-btn" class="feedback-resolve-btn" title="Пометить как решенное">
+                        ✔️ Решить
+                    </button>
+                    <span class="feedback-close-icon" title="Закрыть окно">&times;</span>
+                </div>
+            </h4>
             <div id="feedback-thread-list"></div>
             
             <input type="text" id="feedback-reply-name-input" placeholder="Твое имя">
             <textarea id="feedback-reply-textarea" placeholder="Ответить..."></textarea>
-            <div>
+            <div class="feedback-actions-row">
                 <button id="feedback-reply-btn" class="feedback-btn-primary">Ответить</button>
-                <button id="feedback-close-btn" class="feedback-btn-secondary">Закрыть окно</button>
             </div>
         </div>
     `;
@@ -71,14 +81,36 @@ function initFeedbackUI() {
         });
     });
     
-    // Bottom close button
-    const closeBtn = document.getElementById('feedback-close-btn');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
+    // Resolve thread button
+    document.getElementById('feedback-resolve-btn').addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const threadId = popup.dataset.threadId;
+        const btnResolve = document.getElementById('feedback-resolve-btn');
+        btnResolve.textContent = '⏳...';
+        btnResolve.disabled = true;
+
+        try {
+            await sendToGoogle({ action: 'resolve', id: threadId });
+            
+            // Mark as resolved locally
+            allPins.forEach(p => {
+                if (p.id === threadId || p.parentId === threadId) {
+                    p.status = 'Resolved';
+                }
+            });
+            
+            // Remove the pin element
+            const pinEl = document.querySelector(`.feedback-pin[data-id="${threadId}"]`);
+            if (pinEl) pinEl.remove();
+            
             closePopup();
-        });
-    }
+        } catch (err) {
+            alert('Ошибка: ' + err);
+        } finally {
+            btnResolve.textContent = '✔️ Решить';
+            btnResolve.disabled = false;
+        }
+    });
     
     // Save new pin
     document.getElementById('feedback-save-btn').addEventListener('click', async (e) => {
@@ -103,9 +135,9 @@ function initFeedbackUI() {
 
         try {
             await sendToGoogle({ page, x, y, text, id: newId, parentId: '', name });
-            const newPin = { x, y, text, date: new Date().toLocaleString(), page, id: newId, parentId: '', name };
+            const newPin = { x, y, text, date: new Date().toLocaleString(), page, id: newId, parentId: '', name, status: 'Open' };
             allPins.push(newPin);
-            renderPin(newPin, getPrimaryPins().length);
+            renderPin(newPin);
             closePopup();
         } catch (err) {
             alert('Ошибка при отправке: ' + err);
@@ -136,13 +168,14 @@ function initFeedbackUI() {
         const newId = generateId();
 
         try {
-            // we send empty x and y for replies
             await sendToGoogle({ page, x: '', y: '', text, id: newId, parentId: parentId, name });
-            const newReply = { x: '', y: '', text, date: new Date().toLocaleString(), page, id: newId, parentId, name };
+            const newReply = { x: '', y: '', text, date: new Date().toLocaleString(), page, id: newId, parentId, name, status: 'Open' };
             allPins.push(newReply);
             
             // Re-render thread list
             renderThread(parentId);
+            updatePinCount(parentId);
+            
             document.getElementById('feedback-reply-textarea').value = '';
         } catch (err) {
             alert('Ошибка при отправке: ' + err);
@@ -202,9 +235,12 @@ function openWritePopup(x, y) {
     ta.focus();
 }
 
+function getThreadPins(threadId) {
+    return allPins.filter(p => (p.id === threadId || p.parentId === threadId) && p.status !== 'Resolved');
+}
+
 function renderThread(threadId) {
-    const threadPins = allPins.filter(p => p.id === threadId || p.parentId === threadId);
-    // Sort by date or just keep order (they usually arrive in order)
+    const threadPins = getThreadPins(threadId);
     
     const list = document.getElementById('feedback-thread-list');
     list.innerHTML = '';
@@ -222,7 +258,6 @@ function renderThread(threadId) {
         list.appendChild(msg);
     });
     
-    // Scroll to bottom
     list.scrollTop = list.scrollHeight;
 }
 
@@ -251,17 +286,25 @@ function closePopup() {
 }
 
 function getPrimaryPins() {
-    return allPins.filter(p => !p.parentId); // Only pins that don't have a parent
+    return allPins.filter(p => !p.parentId && p.status !== 'Resolved'); 
 }
 
-function renderPin(pinData, index) {
-    if (pinData.parentId) return; // don't render replies as separate pins
+function updatePinCount(threadId) {
+    const pinEl = document.querySelector(`.feedback-pin[data-id="${threadId}"]`);
+    if (pinEl) {
+        const threadPins = getThreadPins(threadId);
+        pinEl.textContent = threadPins.length;
+    }
+}
+
+function renderPin(pinData) {
+    if (pinData.parentId || pinData.status === 'Resolved') return;
     
     const pin = document.createElement('div');
     pin.className = 'feedback-pin';
+    pin.dataset.id = pinData.id;
     pin.style.left = pinData.x + 'px';
     pin.style.top = pinData.y + 'px';
-    pin.textContent = index;
     
     pin.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -269,6 +312,7 @@ function renderPin(pinData, index) {
     });
 
     document.body.appendChild(pin);
+    updatePinCount(pinData.id); // Set initial count
 }
 
 function formatDate(dateStr) {
@@ -276,6 +320,12 @@ function formatDate(dateStr) {
     try {
         const d = new Date(dateStr);
         if (isNaN(d.getTime())) return dateStr;
+        
+        // Return time if today, else date
+        const today = new Date();
+        if (d.toDateString() === today.toDateString()) {
+            return d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
         return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     } catch(e) {
         return dateStr;
@@ -289,8 +339,8 @@ async function loadPins() {
         const data = await response.json();
         allPins = data;
         
-        getPrimaryPins().forEach((pin, i) => {
-            renderPin(pin, i + 1);
+        getPrimaryPins().forEach(pin => {
+            renderPin(pin);
         });
     } catch(e) {
         console.error("Could not load feedback pins:", e);
