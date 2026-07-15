@@ -1,0 +1,35 @@
+backend:
+  name: git-gateway
+  branch: master
+
+publish_mode: simple
+
+media_folder: "Netlify/штуки для дизайна"
+public_folder: "штуки для дизайна"
+
+collections:
+  - name: "course_docs"
+    label: "Материалы Курса"
+    delete: false
+    create: false
+    files:
+      - name: "starter_pack"
+        label: "Стартовый пакет (Для учеников)"
+        file: "course_content.md"
+        fields:
+          - { label: "Текст", name: "body", widget: "markdown" }
+      - name: "channel_setup"
+        label: "Описание канала и чата"
+        file: "channel_setup.md"
+        fields:
+          - { label: "Текст", name: "body", widget: "markdown" }
+      - name: "telegram_posts"
+        label: "Тексты постов Telegram"
+        file: "telegram_posts.md"
+        fields:
+          - { label: "Текст", name: "body", widget: "markdown" }
+      - name: "launch_checklist"
+        label: "Чек-лист запуска"
+        file: "launch_checklist.md"
+        fields:
+          - { label: "Текст", name: "body", widget: "markdown" }

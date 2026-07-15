@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стартовый пакет — Курс по ритму Космоскай</title>
+    
+    <!-- Фирменный шрифт из брендбука Kosmosky -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* === ПАЛИТРА ИЗ БРЕНДБУКА КОСМОСКАЙ === */
+        :root {
+            --bg-dark: #121212;             /* Темный фон по гайдлайнам */
+            --surface-dark: #1a1c1d;        /* Цвет карточек */
+            
+            /* Фирменные бирюзовые цвета */
+            --kosmosky-white: #FFFFFF;
+            --kosmosky-light: #ADF1FF;
+            --kosmosky-mid: #359FB5;
+            --kosmosky-dark: #075666;
+            
+            /* Градиенты "Звуковые потоки" */
+            --gradient-accent: linear-gradient(135deg, #3D8A9A 0%, #6DC6D8 100%);
+            --gradient-glow: radial-gradient(circle, rgba(53, 159, 181, 0.15) 0%, rgba(18, 18, 18, 0) 70%);
+            
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            
+            --font-main: 'Unbounded', sans-serif;
+        }
+
+        /* === БАЗОВЫЕ СТИЛИ === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Светящиеся эллипсы на фоне (из брендбука) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -200px;
+            left: -200px;
+            width: 800px;
+            height: 800px;
+            background: var(--gradient-glow);
+            z-index: -1;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -300px;
+            right: -100px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(7, 86, 102, 0.2) 0%, rgba(18, 18, 18, 0) 70%);
+            z-index: -1;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* === ТИПОГРАФИКА (Unbounded) === */
+        h1, h2, h3 {
+            font-family: var(--font-main);
+            font-weight: 700; /* Заголовок: Bold 55/32 по брендбуку */
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--kosmosky-light);
+            font-size: 1.2rem;
+            margin-bottom: 60px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--kosmosky-white);
+            margin-top: 50px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(173, 241, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Фирменный знак "S" как маркер списка/заголовка */
+        h2::before {
+            content: 'S';
+            font-size: 1.5rem;
+            color: var(--kosmosky-mid);
+            background: rgba(53, 159, 181, 0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid var(--kosmosky-mid);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--kosmosky-light);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p, ul, ol {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--text-muted);
+        }
+
+        /* === КОМПОНЕНТЫ === */
+        .card {
+            background: var(--surface-dark);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(173, 241, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Мягкое градиентное облако внутри карточки */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(53, 159, 181, 0.1) 0%, rgba(26, 28, 29, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(7, 86, 102, 0.4);
+            border-color: rgba(53, 159, 181, 0.3);
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 12px;
+        }
+
+        ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            top: -2px;
+            color: var(--kosmosky-mid);
+            font-size: 1.5rem;
+        }
+
+        .highlight {
+            background: rgba(53, 159, 181, 0.15);
+            padding: 2px 8px;
+            border-radius: 6px;
+            color: var(--kosmosky-light);
+            font-weight: 400;
+        }
+
+        /* === СПЕЦИАЛЬНЫЕ БЛОКИ === */
+        .grid-template {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            border-radius: 16px;
+            margin: 30px 0;
+            text-align: center;
+            border: 1px dashed rgba(173, 241, 255, 0.3);
+        }
+
+        .grid-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .grid-box {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--kosmosky-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            color: var(--kosmosky-mid);
+            transition: all 0.3s ease;
+        }
+
+        .grid-box.filled {
+            background: var(--gradient-accent);
+            border: none;
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(53, 159, 181, 0.4);
+        }
+
+        .dictionary {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .dict-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-left: 4px solid var(--kosmosky-mid);
+            border-radius: 0 12px 12px 0;
+            transition: background 0.3s ease;
+        }
+
+        .dict-item:hover {
+            background: rgba(53, 159, 181, 0.05);
+        }
+
+        .dict-term {
+            font-weight: 700;
+            color: var(--kosmosky-white);
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            display: inline-block;
+            border-bottom: 1px solid var(--kosmosky-dark);
+        }
+
+        /* === АНИМАЦИИ === */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate {
+            animation: fadeIn 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            .card { padding: 25px; }
+            .grid-box { width: 40px; height: 40px; font-size: 1rem; }
+        }
+    </style>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="animate">
+        <h1>Стартовый пакет</h1>
+        <div class="subtitle">Ксенокурс по ритму Космоскай</div>
+    </div>
+
+    <!-- CONTENT -->
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стартовый пакет — Курс по ритму Космоскай</title>
+    
+    <!-- Фирменный шрифт из брендбука Kosmosky -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* === ПАЛИТРА ИЗ БРЕНДБУКА КОСМОСКАЙ === */
+        :root {
+            --bg-dark: #121212;             /* Темный фон по гайдлайнам */
+            --surface-dark: #1a1c1d;        /* Цвет карточек */
+            
+            /* Фирменные бирюзовые цвета */
+            --kosmosky-white: #FFFFFF;
+            --kosmosky-light: #ADF1FF;
+            --kosmosky-mid: #359FB5;
+            --kosmosky-dark: #075666;
+            
+            /* Градиенты "Звуковые потоки" */
+            --gradient-accent: linear-gradient(135deg, #3D8A9A 0%, #6DC6D8 100%);
+            --gradient-glow: radial-gradient(circle, rgba(53, 159, 181, 0.15) 0%, rgba(18, 18, 18, 0) 70%);
+            
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            
+            --font-main: 'Unbounded', sans-serif;
+        }
+
+        /* === БАЗОВЫЕ СТИЛИ === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Светящиеся эллипсы на фоне (из брендбука) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -200px;
+            left: -200px;
+            width: 800px;
+            height: 800px;
+            background: var(--gradient-glow);
+            z-index: -1;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -300px;
+            right: -100px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(7, 86, 102, 0.2) 0%, rgba(18, 18, 18, 0) 70%);
+            z-index: -1;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* === ТИПОГРАФИКА (Unbounded) === */
+        h1, h2, h3 {
+            font-family: var(--font-main);
+            font-weight: 700; /* Заголовок: Bold 55/32 по брендбуку */
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--kosmosky-light);
+            font-size: 1.2rem;
+            margin-bottom: 60px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--kosmosky-white);
+            margin-top: 50px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(173, 241, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Фирменный знак "S" как маркер списка/заголовка */
+        h2::before {
+            content: 'S';
+            font-size: 1.5rem;
+            color: var(--kosmosky-mid);
+            background: rgba(53, 159, 181, 0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid var(--kosmosky-mid);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--kosmosky-light);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        p, ul, ol {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--text-muted);
+        }
+
+        /* === КОМПОНЕНТЫ === */
+        .card {
+            background: var(--surface-dark);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(173, 241, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Мягкое градиентное облако внутри карточки */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(53, 159, 181, 0.1) 0%, rgba(26, 28, 29, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(7, 86, 102, 0.4);
+            border-color: rgba(53, 159, 181, 0.3);
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 12px;
+        }
+
+        ul li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            top: -2px;
+            color: var(--kosmosky-mid);
+            font-size: 1.5rem;
+        }
+
+        .highlight {
+            background: rgba(53, 159, 181, 0.15);
+            padding: 2px 8px;
+            border-radius: 6px;
+            color: var(--kosmosky-light);
+            font-weight: 400;
+        }
+
+        /* === СПЕЦИАЛЬНЫЕ БЛОКИ === */
+        .grid-template {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            border-radius: 16px;
+            margin: 30px 0;
+            text-align: center;
+            border: 1px dashed rgba(173, 241, 255, 0.3);
+        }
+
+        .grid-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .grid-box {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--kosmosky-mid);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            color: var(--kosmosky-mid);
+            transition: all 0.3s ease;
+        }
+
+        .grid-box.filled {
+            background: var(--gradient-accent);
+            border: none;
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px rgba(53, 159, 181, 0.4);
+        }
+
+        .dictionary {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .dict-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-left: 4px solid var(--kosmosky-mid);
+            border-radius: 0 12px 12px 0;
+            transition: background 0.3s ease;
+        }
+
+        .dict-item:hover {
+            background: rgba(53, 159, 181, 0.05);
+        }
+
+        .dict-term {
+            font-weight: 700;
+            color: var(--kosmosky-white);
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            display: inline-block;
+            border-bottom: 1px solid var(--kosmosky-dark);
+        }
+
+        /* === АНИМАЦИИ === */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate {
+            animation: fadeIn 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2.5rem; }
+            .card { padding: 25px; }
+            .grid-box { width: 40px; height: 40px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="animate">
+        <h1>Стартовый пакет</h1>
+        <div class="subtitle">Ксенокурс по ритму Космоскай</div>
+    </div>
+
+    <div class="card animate delay-1">
+        <h2>Подготовка к занятию</h2>
+        <p>Перед началом тренировки, чтобы повысить КПД 🚀 удели время 🕘 самоподготовке.</p>
+        <ul>
+            <li>Поставь рядом стакан воды.</li>
+            <li>Убедись, что никто не будет отвлекать.</li>
+            <li>Отключи уведомления на телефоне.</li>
+        </ul>
+        
+        <h3>Разминка (5 минут)</h3>
+        <p>Начни с легкой суставной гимнастики. Все движения выполняй плавно и мягко, делая глубокий вдох, раскрывая грудную клетку и на выдохе расслабляйся.</p>
+        <ul>
+            <li>Вращение кистей</li>
+            <li>Вращение локтей</li>
+            <li>Вращение плеч</li>
+            <li>Разминка шеи</li>
+        </ul>
+    </div>
+
+    <div class="card animate delay-2">
+        <h2>Посадка и инструмент</h2>
+        <h3>Как сидеть</h3>
+        <p>Удобная посадка — половина успеха.</p>
+        <ul>
+            <li>Стопы на полу, спина прямая, но не напряжённая. Плечи опущены.</li>
+            <li>Глюкофон лежит на коленях горизонтально, лепестки смотрят вверх. Можно положить на нескользящий коврик или небольшую подушку. Инструмент не должен ездить.</li>
+        </ul>
+        
+        <h3>Как держать руки</h3>
+        <ul>
+            <li>Запястья свободные, удары идут от кисти, а не от локтя.</li>
+            <li>Пальцы чуть округлены, как будто держишь мыльный пузырь.</li>
+        </ul>
+    </div>
+
+    <div class="card animate delay-3">
+        <h2>Метроном и темп</h2>
+        <p>Метроном понадобится с третьего урока. Скачай любое бесплатное приложение:</p>
+        <ul>
+            <li><span class="highlight">Pro Metronome</span> (iOS / Android)</li>
+            <li><span class="highlight">Metronome Beats</span> (Android)</li>
+            <li>Или просто напиши «метроном» в поиске Google.</li>
+        </ul>
+
+        <h3>Таблица темпов (BPM)</h3>
+        <div class="dictionary">
+            <div class="dict-item">
+                <div class="dict-term">60 BPM</div>
+                <div class="dict-desc">Пульс спокойного человека. Идеально для разбора новых рисунков и расслабления.</div>
+            </div>
+            <div class="dict-item">
+                <div class="dict-term">80 BPM</div>
+                <div class="dict-desc">Средний, прогулочный шаг. Уверенное движение.</div>
+            </div>
+            <div class="dict-item">
+                <div class="dict-term">100–120 BPM</div>
+                <div class="dict-desc">Энергичный, танцевальный ритм.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card animate delay-3">
+        <h2>Словарь терминов</h2>
+        <div class="dictionary">
+            <div class="dict-item">
+                <div class="dict-term">Доля (Удар)</div>
+                <div class="dict-desc">Единица измерения времени в музыке. Один клик метронома.</div>
+            </div>
+            <div class="dict-item">
+                <div class="dict-term">Такт</div>
+                <div class="dict-desc">Отрезок времени, состоящий из определённого количества долей. На курсе мы в основном играем в такте из 4 долей (раз-два-три-четыре).</div>
+            </div>
+            <div class="dict-item">
+                <div class="dict-term">Сильная доля</div>
+                <div class="dict-desc">Первая доля в такте (счёт «РАЗ»). Опорная точка ритма.</div>
+            </div>
+            <div class="dict-item">
+                <div class="dict-term">Слабая доля</div>
+                <div class="dict-desc">Остальные доли в такте («два», «три», «четыре»), а также пространство между ударами метронома (счёт «И»).</div>
+            </div>
+            <div class="dict-item">
+                <div class="dict-term">Квадрат</div>
+                <div class="dict-desc">Четыре такта подряд. Стандартная музыкальная фраза.</div>
+            </div>
+            <div class="dict-item">
+                <div class="dict-term">Акцент</div>
+                <div class="dict-desc">Умышленное выделение конкретной ноты (громкостью или способом удара).</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card animate delay-3">
+        <h2>Ритмическая сетка</h2>
+        <p>Это твой главный визуальный инструмент. Один квадратик = одна доля. Заведи тетрадь в клетку, чтобы рисовать такие сетки.</p>
+        
+        <p>Пример простой сетки 4/4 (Такт: 4 доли, сильный удар на «раз»):</p>
+        <div class="grid-template">
+            <div class="grid-row">
+                <div class="grid-box filled">1</div>
+                <div class="grid-box">2</div>
+                <div class="grid-box">3</div>
+                <div class="grid-box">4</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
