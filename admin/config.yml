@@ -44,6 +44,21 @@ collections:
           - { label: "Тариф 1: Цена", name: "price1_amount", widget: "string" }
           - { label: "Тариф 2: Название", name: "price2_name", widget: "string" }
           - { label: "Тариф 2: Цена", name: "price2_amount", widget: "string" }
+          - label: "Дополнительные блоки (Конструктор)"
+            name: "extra_blocks"
+            widget: "list"
+            required: false
+            types:
+              - label: "Заголовок"
+                name: "heading2"
+                widget: "object"
+                fields:
+                  - {label: "Текст заголовка", name: "title", widget: "string"}
+              - label: "Текстовый блок"
+                name: "text_block"
+                widget: "object"
+                fields:
+                  - {label: "Содержимое", name: "content", widget: "markdown"}
       - name: "starter_pack"
         label: "Стартовый пакет (Для учеников)"
         file: "course_content.md"
