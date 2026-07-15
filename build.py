@@ -1,6 +1,7 @@
 import markdown
 import os
 import re
+import yaml
 
 def read_file(filepath):
     # read in best effort
@@ -52,19 +53,47 @@ def main():
 
     # 3. Update index.html
     index_md_content = read_file('index_content.md')
-    index_html_body = md.convert(index_md_content)
+    
+    # Parse frontmatter with PyYAML
+    frontmatter = {}
+    body = index_md_content
+    
+    if index_md_content.startswith('---'):
+        parts = index_md_content.split('---', 2)
+        if len(parts) >= 3:
+            try:
+                frontmatter = yaml.safe_load(parts[1]) or {}
+                body = parts[2].strip()
+            except yaml.YAMLError as e:
+                print(f"Error parsing YAML frontmatter: {e}")
+                
+    index_html_body = md.convert(body)
     index_tpl = read_file('index_template.html')
     
-    if hasattr(md, 'Meta') and md.Meta:
-        for key, value_list in md.Meta.items():
-            value = " ".join(value_list)
-            # Remove enclosing quotes if any from frontmatter values
-            if value.startswith('"') and value.endswith('"'):
-                value = value[1:-1]
-            if value.startswith("'") and value.endswith("'"):
-                value = value[1:-1]
-            index_tpl = index_tpl.replace('{{' + key + '}}', value)
+    # Replace variables from frontmatter
+    for key, value in frontmatter.items():
+        if key == 'extra_blocks':
+            continue # Handle separately
+        # Convert value to string in case it's not
+        str_val = str(value) if value is not None else ""
+        index_tpl = index_tpl.replace('{{' + key + '}}', str_val)
+        
+    # Handle extra blocks
+    extra_blocks_html = ""
+    extra_blocks = frontmatter.get('extra_blocks', [])
+    if extra_blocks:
+        extra_blocks_html += '<section class="extra-blocks-section container" style="padding: 40px 20px;">\n'
+        for block in extra_blocks:
+            btype = block.get('type')
+            if btype == 'text_block':
+                content = md.convert(block.get('content', ''))
+                extra_blocks_html += f'<div class="extra-block-text" style="margin-bottom: 30px;">{content}</div>\n'
+            elif btype == 'heading2':
+                title = block.get('title', '')
+                extra_blocks_html += f'<h2 class="section-title" style="margin-bottom: 30px; text-align: left; color: var(--kosmosky-dark); font-family: var(--font-heading); font-size: 2.5rem; font-weight: 700;">{title}</h2>\n'
+        extra_blocks_html += '</section>\n'
             
+    index_tpl = index_tpl.replace('<!-- EXTRA_BLOCKS -->', extra_blocks_html)
     index_tpl = index_tpl.replace('<!-- AUTHOR_TEXT -->', index_html_body)
     index_out = fix_charset(index_tpl)
     
