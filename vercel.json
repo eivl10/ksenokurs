@@ -1,5 +1,4 @@
 {
-  "buildCommand": "pip install -r requirements.txt && python build.py",
   "outputDirectory": ".",
   "ignoreCommand": "git diff HEAD^ HEAD --quiet ."
 }
