@@ -1,4 +1,8 @@
 {
-  "outputDirectory": ".",
-  "ignoreCommand": "git diff HEAD^ HEAD --quiet ."
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build"
+    }
+  ]
 }
